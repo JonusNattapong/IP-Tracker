@@ -37,6 +37,9 @@ jspm_packages/
 
 # dotenv environment variables file
 .env
+.env.local
+.env.production
+.env.staging
 
 # IDE files
 .vscode/

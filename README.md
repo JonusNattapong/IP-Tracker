@@ -69,11 +69,25 @@ chmod 755 /path/to/your/project
 - **หน้า Trap**: `https://yourusername.github.io/your-repo/index.html`
 - **Admin Panel**: `https://yourusername.github.io/your-repo/admin.html`
 
-### การตั้งค่า GitHub Token (Optional)
+### การตั้งค่า Environment Variables
+1. คัดลอกไฟล์ `.env.example` เป็น `.env`
+2. แก้ไขค่าต่างๆ ใน `.env`:
+
+```bash
+# สำคัญ: แทนที่ด้วย GitHub token จริง
+GITHUB_TOKEN=your_github_personal_access_token_here
+GITHUB_USERNAME=your_github_username
+
+# เลือกประเภทการเก็บข้อมูล
+STORAGE_TYPE=github_gist  # หรือ localStorage
+```
+
+### การตั้งค่า GitHub Token
 1. ไปที่ https://github.com/settings/tokens
-2. สร้าง Personal Access Token ใหม่ (เลือก scope: gist)
-3. แทนที่ `YOUR_GITHUB_TOKEN` ใน `index.html` ด้วย token จริง
-4. ข้อมูลจะถูกบันทึกเป็น GitHub Gists แทน localStorage
+2. สร้าง Personal Access Token ใหม่ (เลือก scope: `gist`)
+3. แทนที่ `GITHUB_TOKEN` ใน `.env` ด้วย token จริง
+4. แทนที่ `YOUR_GITHUB_TOKEN` ใน `index.html` ด้วย token จริง
+5. ข้อมูลจะถูกบันทึกเป็น GitHub Gists แทน localStorage
 
 ## 📁 โครงสร้างไฟล์
 
