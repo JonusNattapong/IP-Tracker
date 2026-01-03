@@ -110,24 +110,42 @@
         let currentDataSource = 'localStorage';
 
         async function loadData() {
-            if (currentDataSource === 'localStorage') {
-                loadFromLocalStorage();
-            } else {
-                await loadFromGitHub();
+            try {
+                // Load stats
+                const statsResponse = await fetch('/api/stats');
+                const stats = await statsResponse.json();
+                updateStats(stats);
+
+                // Load visitors
+                loadVisitors();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                // Fallback to placeholder data
+                updateStats({
+                    total_visitors: 0,
+                    unique_devices: 0,
+                    today_visits: 0,
+                    avg_confidence: 0
+                });
+                loadVisitors();
             }
         }
 
-        function loadFromLocalStorage() {
+        async function loadVisitors() {
+            const container = document.getElementById('visitors-container');
+
             try {
-                const data = JSON.parse(localStorage.getItem('ip_tracker_data') || '[]');
-                allVisitors = data;
-                updateStats(data);
-                displayVisitors(data);
-                updateRawData(data);
-                updateAnalytics(data);
+                const response = await fetch('/api/visitors');
+                const data = await response.json();
+
+                if (data.visitors && data.visitors.length > 0) {
+                    displayVisitors(data.visitors);
+                } else {
+                    container.innerHTML = '<p>No visitor data found yet. Data will appear here when visitors access the tracking page.</p>';
+                }
             } catch (error) {
-                console.error('Error loading from localStorage:', error);
-                document.getElementById('visitors-container').innerHTML = '<p>Error loading data from localStorage.</p>';
+                console.error('Error loading visitors:', error);
+                container.innerHTML = '<p>Error loading visitor data. Check server logs.</p>';
             }
         }
 

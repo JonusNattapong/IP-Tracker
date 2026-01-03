@@ -36,26 +36,21 @@
 
 ## 🚀 การติดตั้งและใช้งาน
 
-### สำหรับ GitHub Pages (แนะนำ)
+### สำหรับ Vercel (แนะนำ - Serverless)
 ```bash
-# 1. สร้าง repository ใหม่บน GitHub
-# 2. Clone repository ลงเครื่อง
-git clone https://github.com/yourusername/your-repo.git
-cd your-repo
+# 1. ติดตั้ง Vercel CLI
+npm install -g vercel
 
-# 3. คัดลอกไฟล์ทั้งหมดไปยัง repository
-cp -r /path/to/ip-tracker/* .
+# 2. เข้าสู่ระบบ Vercel
+vercel login
 
-# 4. แก้ไข GitHub Token ใน index.html (ถ้าต้องการใช้ GitHub Gists)
-# แทนที่ YOUR_GITHUB_TOKEN ด้วย token จริงจาก https://github.com/settings/tokens
+# 3. Deploy โปรเจค
+vercel --prod
 
-# 5. Commit และ push
-git add .
-git commit -m "Add IP tracker with fingerprinting"
-git push origin main
-
-# 6. เปิด GitHub Pages ใน repository settings
-# Settings > Pages > Source: Deploy from a branch > Branch: main
+# หรือใช้ Vercel Dashboard
+# 1. ไปที่ https://vercel.com
+# 2. Import Git repository หรือ upload files
+# 3. Deploy automatically
 ```
 
 ### สำหรับ Server แบบดั้งเดิม (PHP)
@@ -66,8 +61,9 @@ chmod 755 /path/to/your/project
 ```
 
 ### เข้าถึงระบบ
-- **หน้า Trap**: `https://yourusername.github.io/your-repo/index.html`
-- **Admin Panel**: `https://yourusername.github.io/your-repo/admin.html`
+- **หน้า Trap**: `https://your-app.vercel.app/index.html`
+- **Admin Panel**: `https://your-app.vercel.app/admin.html`
+- **API Endpoints**: `https://your-app.vercel.app/api/*`
 
 ### การตั้งค่า Environment Variables
 1. คัดลอกไฟล์ `.env.example` เป็น `.env`
@@ -94,14 +90,17 @@ STORAGE_TYPE=github_gist  # หรือ localStorage
 ```
 IP-Tracker/
 ├── index.html          # หน้าแสดงรูปแมว + JavaScript tracking
-├── admin.php           # แดชบอร์ด admin
-├── src/
-│   └── save.php        # API สำหรับบันทึกข้อมูล
+├── admin.html          # แดชบอร์ด admin (static)
+├── api/
+│   └── index.js        # Vercel API สำหรับบันทึกข้อมูล
 ├── data/               # โฟลเดอร์ข้อมูล (สร้างอัตโนมัติ)
 │   └── {visitor_id}/
 │       ├── visits.json
 │       ├── fingerprints.json
 │       └── geo_{ip}.json
+├── package.json        # Node.js dependencies
+├── vercel.json         # Vercel deployment config
+├── .env.example        # Environment variables template
 ├── leaks.txt           # Log สรุป
 ├── .gitignore          # Git ignore rules
 └── README.md           # ไฟล์นี้
