@@ -61,7 +61,7 @@ chmod 755 /path/to/your/project
 ```
 
 ### เข้าถึงระบบ
-- **หน้า Trap**: `https://your-app.vercel.app/index.html`
+- **หน้า Trap (เว็บข่าวเทคโนโลยี)**: `https://your-app.vercel.app/index.html`
 - **Admin Panel**: `https://your-app.vercel.app/admin.html`
 - **API Endpoints**: `https://your-app.vercel.app/api/*`
 
