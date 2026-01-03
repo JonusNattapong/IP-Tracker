@@ -21,7 +21,7 @@ const ensureDataDir = async (visitorId) => {
 };
 
 // POST /api/track - Main tracking endpoint
-app.post('/api/track', async (req, res) => {
+app.post('/track', async (req, res) => {
     try {
         const data = req.body;
 
@@ -158,7 +158,7 @@ app.post('/api/track', async (req, res) => {
 });
 
 // GET /api/visitors - List all visitors
-app.get('/api/visitors', async (req, res) => {
+app.get('/visitors', async (req, res) => {
     try {
         const dataDir = path.join(process.cwd(), 'data');
 
@@ -203,7 +203,7 @@ app.get('/api/visitors', async (req, res) => {
 });
 
 // GET /api/visitor/:id - Get visitor details
-app.get('/api/visitor/:id', async (req, res) => {
+app.get('/visitor/:id', async (req, res) => {
     try {
         const visitorId = req.params.id;
         const dataDir = await ensureDataDir(visitorId);
@@ -250,7 +250,7 @@ app.get('/api/visitor/:id', async (req, res) => {
 });
 
 // GET /api/stats - Get statistics
-app.get('/api/stats', async (req, res) => {
+app.get('/stats', async (req, res) => {
     try {
         const dataDir = path.join(process.cwd(), 'data');
         const stats = {

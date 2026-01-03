@@ -112,7 +112,7 @@
         async function loadData() {
             try {
                 // Load stats
-                const statsResponse = await fetch('/api/stats');
+                const statsResponse = await fetch('/stats');
                 const stats = await statsResponse.json();
                 updateStats(stats);
 
@@ -135,7 +135,7 @@
             const container = document.getElementById('visitors-container');
 
             try {
-                const response = await fetch('/api/visitors');
+                const response = await fetch('/visitors');
                 const data = await response.json();
 
                 if (data.visitors && data.visitors.length > 0) {
