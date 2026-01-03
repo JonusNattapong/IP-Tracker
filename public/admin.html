@@ -117,7 +117,7 @@
                 updateStats(stats);
 
                 // Load visitors
-                loadVisitors();
+                await loadVisitors();
             } catch (error) {
                 console.error('Error loading data:', error);
                 // Fallback to placeholder data
@@ -127,7 +127,7 @@
                     today_visits: 0,
                     avg_confidence: 0
                 });
-                loadVisitors();
+                document.getElementById('visitors-container').innerHTML = '<p>Error loading data. Please check server logs.</p>';
             }
         }
 
@@ -155,18 +155,11 @@
             document.getElementById('visitors-container').innerHTML = '<p>GitHub integration requires token setup. Use localStorage for now.</p>';
         }
 
-        function updateStats(data) {
-            const totalVisitors = data.length;
-            const uniqueDevices = new Set(data.map(d => d.fingerprintJS?.visitorId)).size;
-            const today = new Date().toDateString();
-            const todayVisits = data.filter(d => new Date(d.timestamp).toDateString() === today).length;
-            const avgConfidence = data.length > 0 ?
-                data.reduce((sum, d) => sum + (d.fingerprintJS?.confidence || 0), 0) / data.length : 0;
-
-            document.getElementById('total-visitors').textContent = totalVisitors;
-            document.getElementById('unique-devices').textContent = uniqueDevices;
-            document.getElementById('today-visits').textContent = todayVisits;
-            document.getElementById('avg-confidence').textContent = Math.round(avgConfidence * 100) + '%';
+        function updateStats(stats) {
+            document.getElementById('total-visitors').textContent = stats.total_visitors || 0;
+            document.getElementById('unique-devices').textContent = stats.unique_devices || 0;
+            document.getElementById('today-visits').textContent = stats.today_visits || 0;
+            document.getElementById('avg-confidence').textContent = Math.round(stats.avg_confidence || 0) + '%';
         }
 
         function displayVisitors(data) {
